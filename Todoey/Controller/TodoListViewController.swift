@@ -11,7 +11,10 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     //let itemArray: [ItemCell] = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
-    var itemArray: [ItemCell] = []
+    //var itemArray: [ItemCell] = []
+    var itemArray: [String] = []
+    
+    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,9 +22,12 @@ class TodoListViewController: UITableViewController {
     }
     
     func loadItems() {
-        addItem(title: "Find Mike")
-        addItem(title: "Buy Eggos")
-        addItem(title: "Destroy Demogorgon")
+        //        addItem(title: "Find Mike")
+        //        addItem(title: "Buy Eggos")
+        //        addItem(title: "Destroy Demogorgon")
+        if let items = defaults.array(forKey: K.todoListKey) as? [String] {
+            itemArray = items
+        }
     }
     
     func createItem (title: String) -> ItemCell {
@@ -30,7 +36,8 @@ class TodoListViewController: UITableViewController {
     }
     
     func addItem (title: String) {
-        itemArray.append(createItem(title: title))
+        //itemArray.append(createItem(title: title))
+        itemArray.append(title)
     }
     
     //MARK: - <Tableview Datasource Methods>
@@ -42,7 +49,8 @@ class TodoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = itemArray[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath)
-        cell.textLabel?.text = item.title
+        //cell.textLabel?.text = item.title
+        cell.textLabel?.text = item
         
         return cell
     }
@@ -73,6 +81,8 @@ class TodoListViewController: UITableViewController {
             //self.itemArray.append(newItem)
             if let safeText = textField.text {
                 self.addItem(title: safeText)
+                print(self.itemArray)
+                self.defaults.set(self.itemArray, forKey: K.todoListKey)
                 self.tableView.reloadData()
             } else {
                 print("New item textfield is nil")
