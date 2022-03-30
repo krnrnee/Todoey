@@ -8,6 +8,9 @@
 
 import Foundation
 
-struct ItemCell {
-    let title: String
+class Item: Codable {
+    var category: String = ""
+    var title: String = ""
+    var done: Bool = false
+
 }

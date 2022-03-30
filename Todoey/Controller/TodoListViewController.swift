@@ -10,34 +10,21 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
     
-    //let itemArray: [ItemCell] = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
-    //var itemArray: [ItemCell] = []
-    var itemArray: [String] = []
     
-    let defaults = UserDefaults.standard
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(K.appendingPathComponent)
+ 
+    var itemArray = [Item]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+         
         loadItems()
     }
     
-    func loadItems() {
-        //        addItem(title: "Find Mike")
-        //        addItem(title: "Buy Eggos")
-        //        addItem(title: "Destroy Demogorgon")
-        if let items = defaults.array(forKey: K.todoListKey) as? [String] {
-            itemArray = items
-        }
-    }
-    
-    func createItem (title: String) -> ItemCell {
-        let newItem = ItemCell(title: title)
-        return newItem
-    }
-    
     func addItem (title: String) {
-        //itemArray.append(createItem(title: title))
-        itemArray.append(title)
+        let item = Item()
+        item.title = title
+        itemArray.append(item)
     }
     
     //MARK: - <Tableview Datasource Methods>
@@ -49,8 +36,11 @@ class TodoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = itemArray[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath)
-        //cell.textLabel?.text = item.title
-        cell.textLabel?.text = item
+        cell.textLabel?.text = item.title
+        
+        //Ternary operator
+        // value = condition ? valueIfTrue : valueIfFalse
+        cell.accessoryType = item.done  ? .checkmark : .none
         
         return cell
     }
@@ -59,11 +49,10 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        saveItems()
+        
+        tableView.reloadData()
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -77,12 +66,9 @@ class TodoListViewController: UITableViewController {
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            //let newItem = self.createItem(title: textField.text ?? "")
-            //self.itemArray.append(newItem)
             if let safeText = textField.text {
                 self.addItem(title: safeText)
-                print(self.itemArray)
-                self.defaults.set(self.itemArray, forKey: K.todoListKey)
+                self.saveItems()
                 self.tableView.reloadData()
             } else {
                 print("New item textfield is nil")
@@ -99,5 +85,29 @@ class TodoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    //MARK: - <Data Manipulation Methods>
+    
+    func saveItems() {
+        let encoder = PropertyListEncoder()
+        
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("Error encoding item array, \(error)")
+        }
+    }
+    
+    func loadItems() {
+        
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error decoding item array, \(error)")
+            }
+        }
+    }
 }
 
