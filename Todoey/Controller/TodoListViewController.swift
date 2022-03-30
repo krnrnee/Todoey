@@ -11,21 +11,23 @@ import CoreData
 
 class TodoListViewController: UITableViewController {
     
+    @IBOutlet weak var searchBar: UISearchBar!
     
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(K.appendingPathComponent)
- 
+//    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(K.appendingPathComponent)
+    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-
+    
     var itemArray = [Item]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         //print(dataFilePath)
-         
+        
+        searchBar.delegate = self
         loadItems()
     }
-        
-    //MARK: - <Tableview Datasource Methods>
+    
+    //MARK: - Tableview Datasource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
@@ -33,7 +35,7 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = itemArray[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.todoCellIdentifier, for: indexPath)
         cell.textLabel?.text = item.title
         
         //Ternary operator
@@ -43,7 +45,7 @@ class TodoListViewController: UITableViewController {
         return cell
     }
     
-    //MARK: - <Tableview Datasource Methods>
+    //MARK: - Tableview Delegate Methods
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
@@ -81,7 +83,7 @@ class TodoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    //MARK: - <Data Manipulation Methods>
+    //MARK: - Data Manipulation Methods
     
     func addItem (title: String) {
         let newItem = Item(context: context)
@@ -91,24 +93,23 @@ class TodoListViewController: UITableViewController {
         saveItems()
         tableView.reloadData()
     }
-
+    
     func saveItems() {
         
         do {
             try context.save()
-         } catch {
-             print("Error saving context")
-         }
+        } catch {
+            print("Error saving context")
+        }
     }
     
-    func loadItems() {
-        
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
         
         do {
-           itemArray = try context.fetch(request)
+            itemArray = try context.fetch(request)
+            tableView.reloadData()
         } catch {
-            print("Error fetching data from context \(error)")
+            print("Error fetching from context using passed request \(error)")
         }
     }
     
@@ -118,5 +119,27 @@ class TodoListViewController: UITableViewController {
         saveItems()
         tableView.reloadData()
     }
+}
+
+//MARK: - SearchBar Delegate extension
+
+extension TodoListViewController: UISearchBarDelegate
+{
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        request.predicate = NSPredicate(format: K.searchTitleFormat, searchBar.text!)
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        loadItems(with: request)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
+    
 }
 

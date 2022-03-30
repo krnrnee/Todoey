@@ -7,8 +7,11 @@
 //
 
 struct K {
-    static let cellIdentifier = "ToDoItemCell"
+    static let categoryCellID = "CategoryCell"
+    static let todoCellIdentifier = "ToDoItemCell"
     static let todoListKey = "TodoListArray"
     static let appendingPathComponent = "Items.plist"
     static let dataModelName = "DataModel"
+    static let searchTitleFormat = "title CONTAINS[cd] %@"
+    static let toDoListSegueID = "GoToItems"
 }
