@@ -13,5 +13,6 @@ struct K {
     static let appendingPathComponent = "Items.plist"
     static let dataModelName = "DataModel"
     static let searchTitleFormat = "title CONTAINS[cd] %@"
+    static let catItemFormat = "parentCategory.name MATCHES %@"
     static let toDoListSegueID = "GoToItems"
 }
