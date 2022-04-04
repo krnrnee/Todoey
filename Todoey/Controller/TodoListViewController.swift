@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController {
     
     @IBOutlet weak var searchBar: UISearchBar!
     
@@ -20,6 +20,8 @@ class TodoListViewController: UITableViewController {
     var selectedCategory: Category? {
         didSet {
             loadItems()
+            
+            tableView.rowHeight = 80
         }
     }
     
@@ -39,8 +41,8 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: K.todoCellIdentifier, for: indexPath)
-        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+
         if let item = items?[indexPath.row] {
             cell.textLabel?.text = item.title
             
@@ -127,6 +129,8 @@ class TodoListViewController: UITableViewController {
         tableView.reloadData()
     }
     
+    //MARK: - Delete Items
+    
     func deleteItem (item: Item) {
         do {
             try realm.write {
@@ -135,8 +139,14 @@ class TodoListViewController: UITableViewController {
         } catch {
             print("Error deleting item")
         }
-        tableView.reloadData()
     }
+    
+    override func updateModel(at indexPath: IndexPath) {
+        
+        self.deleteItem(item: (self.items?[indexPath.row])!)
+ 
+    }
+
 }
 
 //MARK: - SearchBar Delegate extension
@@ -151,12 +161,12 @@ extension TodoListViewController: UISearchBarDelegate
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-                if searchBar.text?.count == 0 {
-                    loadItems()
-                    DispatchQueue.main.async {
-                        searchBar.resignFirstResponder()
-                    }
-                }
+        if searchBar.text?.count == 0 {
+            loadItems()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
     }
     
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D42D9AF27FB1849001D441B /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D42D9AE27FB1849001D441B /* SwipeTableViewController.swift */; };
 		4D6BCA5C27F366C500EF851C /* K.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D6BCA5B27F366C500EF851C /* K.swift */; };
 		4D6BCA8927F4C88500EF851C /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D6BCA8827F4C88500EF851C /* CategoryViewController.swift */; };
 		4DA9D23827F78FD20004BADD /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 4DA9D23727F78FD20004BADD /* Realm */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4D42D9AE27FB1849001D441B /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 		4D6BCA5B27F366C500EF851C /* K.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = K.swift; sourceTree = "<group>"; };
 		4D6BCA8827F4C88500EF851C /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 		4DA9D23D27F794A20004BADD /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
@@ -62,6 +64,7 @@
 			children = (
 				4D6BCA8827F4C88500EF851C /* CategoryViewController.swift */,
 				EB2BE4FD239524DB00FB933B /* TodoListViewController.swift */,
+				4D42D9AE27FB1849001D441B /* SwipeTableViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -189,6 +192,7 @@
 				4D6BCA8927F4C88500EF851C /* CategoryViewController.swift in Sources */,
 				4D6BCA5C27F366C500EF851C /* K.swift in Sources */,
 				EB2BE4FE239524DB00FB933B /* TodoListViewController.swift in Sources */,
+				4D42D9AF27FB1849001D441B /* SwipeTableViewController.swift in Sources */,
 				4DA9D24027F795020004BADD /* Item.swift in Sources */,
 				EB2BE4FA239524DB00FB933B /* AppDelegate.swift in Sources */,
 				4DA9D23E27F794A20004BADD /* Category.swift in Sources */,
