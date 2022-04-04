@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class CategoryViewController: SwipeTableViewController {
     
@@ -21,7 +22,18 @@ class CategoryViewController: SwipeTableViewController {
         
         loadCategories()
         
-        tableView.rowHeight = 80
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        guard let navBar = navigationController?.navigationBar else {fatalError("Navigation Controller does not exist")}
+        
+        navBar.backgroundColor = FlatSkyBlue()
+        
+        navBar.tintColor = ContrastColorOf(navBar.backgroundColor ?? .white, returnFlat: true)
+        
+         navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : navBar.tintColor ?? .white]
         
     }
     
@@ -33,8 +45,19 @@ class CategoryViewController: SwipeTableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        
+        let category = categories?[indexPath.row]
  
-        cell.textLabel?.text = categories?[indexPath.row].name ?? "Add your first category"
+        cell.textLabel?.text = category?.name ?? "Add your first category"
+        
+        if let hexColor = category?.hexColor {
+            if hexColor != "" {
+                cell.backgroundColor = UIColor(hexString: hexColor)
+            } else {
+                cell.backgroundColor = UIColor.randomFlat()
+            }
+            cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)
+        }
         
         return cell
     }
@@ -61,6 +84,7 @@ class CategoryViewController: SwipeTableViewController {
     func addCategory (name: String) {
         let newCategory = Category()
         newCategory.name = name
+        newCategory.hexColor = UIColor.randomFlat().hexValue()
         saveCategory(category: newCategory)
         tableView.reloadData()
     }
